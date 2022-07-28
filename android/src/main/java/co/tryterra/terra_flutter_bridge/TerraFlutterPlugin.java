@@ -23,203 +23,80 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 
-import co.tryterra.terra.*;
 import kotlin.Unit;
 
 /** TerraFlutterPlugin */
 public class TerraFlutterPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
-  /// The MethodChannel that will the communication between Flutter and native Android
+  /// The MethodChannel that will the communication between Flutter and native
+  /// Android
   ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
+  /// This local reference serves to register the plugin with the Flutter Engine
+  /// and unregister it
   /// when the Flutter Engine is detached from the Activity
   private MethodChannel channel;
   private Context context;
   private FlutterActivity activity = null;
   private BinaryMessenger binaryMessenger = null;
 
-  public Terra terra;
-
-  // parsing
-  private Connections parseConnection(String connection){
-    switch (connection){
-        case "SAMSUNG":
-            return Connections.SAMSUNG;
-        case "GOOGLE":
-            return Connections.GOOGLE_FIT;
-        case "FREESTYLE_LIBRE":
-            return Connections.FREESTYLE_LIBRE;
-    }
-    return null;
-  }
-
-  private Permissions parsePermissions(String permission){
-      switch (permission){
-          case "ACTIVITY":
-              return Permissions.ACTIVITY;
-          case "ATHLETE":
-              return Permissions.ATHLETE;
-          case "BODY":
-              return Permissions.BODY;
-          case "DAILY":
-              return Permissions.DAILY;
-          case "NUTRITION":
-              return Permissions.NUTRITION;
-          case "SLEEP":
-              return Permissions.SLEEP;
-      }
-      return null;
-  }
-
-  private void testFunction(String text, @NonNull Result result){
+  private void testFunction(String text, @NonNull Result result) {
     result.success(text);
   }
 
-
   // init
   private void initTerra(
-    String devID,
-    String referenceId,
-    int sleepTimer,
-    int dailyTimer,
-    int bodyTimer,
-    int activityTimer,
-    int nutritionTimer,
-    Result result
-  ) {
-    try{
-      this.terra = new Terra(
-        devID,
-        Objects.requireNonNull(this.context),
-        bodyTimer * 60 * 1000,
-        sleepTimer * 60 * 1000,
-        dailyTimer * 60 * 1000,
-        nutritionTimer * 60 * 1000,
-        activityTimer * 60 * 1000,
-        referenceId,
-        null
-      );
-      result.success(true);
-    }
-    catch(Exception e){
-      result.error("Init Failure", "Could not initialise Terra", e);
-    }
+      String devID,
+      String referenceId,
+      int sleepTimer,
+      int dailyTimer,
+      int bodyTimer,
+      int activityTimer,
+      int nutritionTimer,
+      Result result) {
+
   }
 
   private void initConnection(
-    String connection,
-    String token,
-    Boolean schedulerOn,
-    ArrayList<String> permissions,
-    ArrayList<String> customPermissions,
-    Result result
-  ){
-    if (parseConnection(connection) == null){
-        result.error("Connection Failure", "Invalid Connection has been passed for the android platform", null);
-        return;
-    }
+      String connection,
+      String token,
+      Boolean schedulerOn,
+      ArrayList<String> permissions,
+      ArrayList<String> customPermissions,
+      Result result) {
 
-    HashSet<Permissions> perms = new HashSet<>();
-    for (String permission: permissions){
-        perms.add(parsePermissions(permission));
-    }
-    this.terra.initConnection(
-      Objects.requireNonNull(parseConnection(connection)),
-      token, Objects.requireNonNull(this.context),
-      perms,
-      schedulerOn,
-      null,
-      (success)-> {
-        result.success(success);
-        return Unit.INSTANCE;
-      });
   }
 
-  private void getUserId(String connection, Result result){
-    try {
-      result.success(terra.getUserId(
-        Objects.requireNonNull(parseConnection(connection))
-      ));
-    }
-    catch(Exception e) {
-      result.error("Getter Failure", "Could not get user id", e);
-    }
+  private void getUserId(String connection, Result result) {
+
   }
 
   // getters
-  private void getAthlete(String connection, Result result){
-    this.terra.getAthlete(
-      Objects.requireNonNull(parseConnection(connection)),
-      (success, payload) -> {
-        result.success(success);
-        return Unit.INSTANCE;
-      }
-    );
+  private void getAthlete(String connection, Result result) {
+
   }
-  private void getActivity(String connection, Date startDate, Date endDate, Result result){
-    this.terra.getActivity(
-      Objects.requireNonNull(parseConnection(connection)),
-      startDate,
-      endDate,
-      (success, payload) -> {
-        result.success(success);
-        return Unit.INSTANCE;
-      }
-    );
+
+  private void getActivity(String connection, Date startDate, Date endDate, Result result) {
+
   }
-  private void getBody(String connection, Date startDate, Date endDate, Result result){
-    this.terra.getBody(
-      Objects.requireNonNull(parseConnection(connection)),
-      startDate,
-      endDate,
-      (success, payload) -> {
-        result.success(success);
-        return Unit.INSTANCE;
-      }
-    );
+
+  private void getBody(String connection, Date startDate, Date endDate, Result result) {
+
   }
-  private void getDaily(String connection, Date startDate, Date endDate, Result result){
-    this.terra.getDaily(
-      Objects.requireNonNull(parseConnection(connection)),
-      startDate,
-      endDate,
-      (success, payload) -> {
-        result.success(success);
-        return Unit.INSTANCE;
-      }
-    );
+
+  private void getDaily(String connection, Date startDate, Date endDate, Result result) {
+
   }
-  private void getNutrition(String connection, Date startDate, Date endDate, Result result){
-    this.terra.getNutrition(
-      Objects.requireNonNull(parseConnection(connection)),
-      startDate,
-      endDate,
-      (success, payload) -> {
-        result.success(success);
-        return Unit.INSTANCE;
-      }
-    );
+
+  private void getNutrition(String connection, Date startDate, Date endDate, Result result) {
+
   }
-  private void getSleep(String connection, Date startDate, Date endDate, Result result){
-    this.terra.getSleep(
-      Objects.requireNonNull(parseConnection(connection)),
-      startDate,
-      endDate,
-      (success, payload) -> {
-        result.success(success);
-        return Unit.INSTANCE;
-      }
-    );
+
+  private void getSleep(String connection, Date startDate, Date endDate, Result result) {
+
   }
 
   // freestyle
-  private void activateGlucoseSensor(Result result){
-    try{
-      terra.activateSensor();
-      result.success(true);
-    }
-    catch(Exception e){
-      result.error("Sensor Activation Failure", "Could not activate freestyle sensor", e);
-    }
+  private void activateGlucoseSensor(Result result) {
+
   }
 
   @Override
@@ -229,7 +106,7 @@ public class TerraFlutterPlugin implements FlutterPlugin, MethodCallHandler, Act
   }
 
   @Override
-  public void onAttachedToActivity(ActivityPluginBinding binding){
+  public void onAttachedToActivity(ActivityPluginBinding binding) {
     this.context = (Context) binding.getActivity();
     channel = new MethodChannel(binaryMessenger, "terra_flutter_bridge");
     channel.setMethodCallHandler(this);
@@ -258,82 +135,72 @@ public class TerraFlutterPlugin implements FlutterPlugin, MethodCallHandler, Act
         break;
       case "initTerra":
         initTerra(
-          call.argument("devID"),
-          call.argument("referenceID"),
-          call.argument("sleepTimer"),
-          call.argument("dailyTimer"),
-          call.argument("bodyTimer"),
-          call.argument("activityTimer"),
-          call.argument("nutritionTimer"),
-          result
-        );
+            call.argument("devID"),
+            call.argument("referenceID"),
+            call.argument("sleepTimer"),
+            call.argument("dailyTimer"),
+            call.argument("bodyTimer"),
+            call.argument("activityTimer"),
+            call.argument("nutritionTimer"),
+            result);
         break;
       case "initConnection":
         initConnection(
-          call.argument("connection"),
-          call.argument("token"),
-          call.argument("schedulerOn"),
-          call.argument("permissions"),
-          call.argument("customPermissions"),
-          result
-        );
+            call.argument("connection"),
+            call.argument("token"),
+            call.argument("schedulerOn"),
+            call.argument("permissions"),
+            call.argument("customPermissions"),
+            result);
         break;
       case "getActivity":
         getActivity(
-          call.argument("connection"),
-          Date.from(Instant.parse(call.argument("startDate"))),
-          Date.from(Instant.parse(call.argument("endDate"))),
-          result
-        );
+            call.argument("connection"),
+            Date.from(Instant.parse(call.argument("startDate"))),
+            Date.from(Instant.parse(call.argument("endDate"))),
+            result);
         break;
       case "getBody":
         getBody(
-          call.argument("connection"),
-          Date.from(Instant.parse(call.argument("startDate"))),
-          Date.from(Instant.parse(call.argument("endDate"))),
-          result
-        );
+            call.argument("connection"),
+            Date.from(Instant.parse(call.argument("startDate"))),
+            Date.from(Instant.parse(call.argument("endDate"))),
+            result);
         break;
       case "getDaily":
         getDaily(
-          call.argument("connection"),
-          Date.from(Instant.parse(call.argument("startDate"))),
-          Date.from(Instant.parse(call.argument("endDate"))),
-          result
-        );
+            call.argument("connection"),
+            Date.from(Instant.parse(call.argument("startDate"))),
+            Date.from(Instant.parse(call.argument("endDate"))),
+            result);
         break;
       case "getNutrition":
         getNutrition(
-          call.argument("connection"),
-          Date.from(Instant.parse(call.argument("startDate"))),
-          Date.from(Instant.parse(call.argument("endDate"))),
-          result
-        );
+            call.argument("connection"),
+            Date.from(Instant.parse(call.argument("startDate"))),
+            Date.from(Instant.parse(call.argument("endDate"))),
+            result);
         break;
       case "getSleep":
         getSleep(
-          call.argument("connection"),
-          Date.from(Instant.parse(call.argument("startDate"))),
-          Date.from(Instant.parse(call.argument("endDate"))),
-          result
-        );
+            call.argument("connection"),
+            Date.from(Instant.parse(call.argument("startDate"))),
+            Date.from(Instant.parse(call.argument("endDate"))),
+            result);
         break;
       case "getAthlete":
         getAthlete(
-          call.argument("connection"),
-          result
-        );
+            call.argument("connection"),
+            result);
         break;
       case "activateGlucoseSensor":
         activateGlucoseSensor(
-          result
-        );
+            result);
         break;
       case "getUserId":
         getUserId(
-          call.argument("connection"), 
-          result
-        );
+            call.argument("connection"),
+            result);
         break;
       default:
         result.notImplemented();

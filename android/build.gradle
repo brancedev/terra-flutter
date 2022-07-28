@@ -30,10 +30,6 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 28
-    }
-
-    dependencies {
-        implementation 'co.tryterra:terra-android:1.0.10'
+        minSdkVersion 21
     }
 }
